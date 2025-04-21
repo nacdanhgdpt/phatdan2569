@@ -60,9 +60,31 @@ function renderDay(day, btn, schedule) {
     tasks.forEach(task => {
       const div = document.createElement("div");
       div.className = "task";
+
+      // Leader section
+      const leaderAvatar = `avatars/${task.leader.replace(/\s+/g, "_")}.jpg`;
+      const leaderHTML = `
+        <div class="leader">
+          <img src="${leaderAvatar}" alt="${task.leader}" onerror="this.src='avatars/default.png'">
+          <span>${task.leader} (Leader)</span>
+        </div>`;
+
+      // Team members
+      const teamMembers = task.team.split(",").map(member => member.trim());
+      const teamHTML = teamMembers
+        .map(member => {
+          const avatarSrc = `avatars/${member.replace(/\s+/g, "_")}.jpg`;
+          return `
+            <div class="team-member">
+              <img src="${avatarSrc}" alt="${member}" onerror="this.src='avatars/default.png'">
+              <span>${member}</span>
+            </div>`;
+        })
+        .join("");
+
       div.innerHTML = `<strong>${task.title}</strong><br>
-        👨 Phụ trách: ${task.leader}<br>
-        👥 Nhóm: ${task.team}
+        ${leaderHTML}
+        👥 Nhóm:<div class="team-container">${teamHTML}</div>
         ${task.tools ? `<br>🛠 Dụng cụ: ${task.tools}` : ""}`;
       timeBlock.appendChild(div);
     });
