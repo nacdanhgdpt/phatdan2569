@@ -34,7 +34,7 @@ function parseCSV(csvText) {
 }
 
 async function init() {
-  const days = ["25/4 (Thứ Sáu)", "26/4 (Thứ Bảy)"]; // List of days
+  const days = ["25/4 (Thứ Sáu)", "26/4 (Thứ Bảy)", "30/4 (Thứ Tư)"]; // Add 30/4 (Thứ Tư)
   const tabs = document.getElementById("tabs");
   const content = document.getElementById("content");
 
