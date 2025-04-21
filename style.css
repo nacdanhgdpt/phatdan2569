@@ -1,0 +1,49 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background: #fefefe;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #7b341e;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  background: #edf2f7;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.tabs button.active {
+  background-color: #c05621;
+  color: white;
+}
+
+.day-block {
+  margin-bottom: 30px;
+}
+
+.time-block h3 {
+  margin: 10px 0 5px;
+  color: #2b6cb0;
+}
+
+.task {
+  background: #fdf6e3;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
