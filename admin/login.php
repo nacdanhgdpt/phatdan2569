@@ -6,20 +6,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
-    // Load users from CSV
-    $users = array_map('str_getcsv', file('users.csv'));
-    foreach ($users as $user) {
-        [$storedUsername, $storedPasswordHash] = $user;
+    $usersFile = __DIR__ . '/../users.csv'; // Ensure the correct path to users.csv
+    if (!file_exists($usersFile)) {
+        $error = 'User data file not found. Please contact the administrator.';
+    } else {
+        // Load users from CSV
+        $users = array_map('str_getcsv', file($usersFile));
+        foreach ($users as $user) {
+            [$storedUsername, $storedPasswordHash] = $user;
 
-        // Check credentials
-        if ($username === $storedUsername && password_verify($password, $storedPasswordHash)) {
-            $_SESSION['logged_in'] = true;
-            header('Location: admin.php');
-            exit;
+            // Check credentials
+            if ($username === $storedUsername && password_verify($password, $storedPasswordHash)) {
+                $_SESSION['logged_in'] = true;
+                header('Location: index.php');
+                exit;
+            }
         }
-    }
 
-    $error = 'Invalid username or password.';
+        $error = 'Invalid username or password.';
+    }
 }
 ?>
 
@@ -29,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="../common-style.css">
+    <link rel="stylesheet" href="../login-style.css">
 </head>
 <body>
-    <h1>Login</h1>
     <form method="POST" action="login.php">
         <?php if (!empty($error)): ?>
             <p style="color: red;"><?= htmlspecialchars($error) ?></p>
