@@ -5,10 +5,17 @@ async function fetchSchedule() {
 }
 
 function parseCSV(csvText) {
-  const rows = csvText.split("\n").map(row => row.split(","));
+  const rows = csvText
+    .split("\n")
+    .filter(row => row.trim()) // Ignore empty lines
+    .map(row => {
+      return row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g)?.map(cell => cell.replace(/^"|"$/g, '').trim()) || [];
+    });
+
   const schedule = {};
   rows.slice(1).forEach(row => {
-    const [day, time, title, leader, team, tools] = row.map(cell => cell.trim());
+    if (row.length < 6) return; // Skip rows with insufficient columns
+    const [day, time, title, leader, team, tools] = row;
     if (!schedule[day]) schedule[day] = {};
     if (!schedule[day][time]) schedule[day][time] = [];
     schedule[day][time].push({ title, leader, team, tools: tools || undefined });
