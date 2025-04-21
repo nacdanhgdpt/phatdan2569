@@ -1,7 +1,18 @@
-async function fetchSchedule() {
-  const response = await fetch("schedule.csv");
-  const csvText = await response.text();
-  return parseCSV(csvText);
+async function fetchScheduleForDay(day) {
+  try {
+    const fileName = day.replace(/\//g, "-").split(" ")[0] + ".csv"; // Convert "25/4 (Thứ Sáu)" to "25-4.csv"
+    const response = await fetch(fileName);
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${fileName}: ${response.statusText}`);
+    }
+
+    const csvText = await response.text();
+    return parseCSV(csvText);
+  } catch (error) {
+    console.error("Error fetching schedule:", error);
+    return null; // Return null if there's an error
+  }
 }
 
 function parseCSV(csvText) {
@@ -14,45 +25,50 @@ function parseCSV(csvText) {
 
   const schedule = {};
   rows.slice(1).forEach(row => {
-    if (row.length < 6) return; // Skip rows with insufficient columns
-    const [day, time, title, leader, team, tools] = row;
-    if (!schedule[day]) schedule[day] = {};
-    if (!schedule[day][time]) schedule[day][time] = [];
-    schedule[day][time].push({ title, leader, team, tools: tools || undefined });
+    if (row.length < 5) return; // Skip rows with insufficient columns
+    const [time, title, leader, team, tools] = row;
+    if (!schedule[time]) schedule[time] = [];
+    schedule[time].push({ title, leader, team, tools: tools || undefined });
   });
   return schedule;
 }
 
 async function init() {
-  const schedule = await fetchSchedule();
+  const days = ["25/4 (Thứ Sáu)", "26/4 (Thứ Bảy)"]; // List of days
   const tabs = document.getElementById("tabs");
   const content = document.getElementById("content");
 
-  Object.keys(schedule).forEach((day, index) => {
+  days.forEach((day, index) => {
     const btn = document.createElement("button");
     btn.innerText = day;
     btn.className = index === 0 ? "active" : "";
-    btn.onclick = () => renderDay(day, btn, schedule);
+    btn.onclick = () => renderDay(day, btn);
     tabs.appendChild(btn);
   });
 
   // Render ngày đầu tiên
-  renderDay(Object.keys(schedule)[0], tabs.children[0], schedule);
+  renderDay(days[0], tabs.children[0]);
 }
 
-function renderDay(day, btn, schedule) {
+async function renderDay(day, btn) {
   // Đổi tab đang chọn
   [...tabs.children].forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
 
-  content.innerHTML = "";
-  const dayData = schedule[day];
+  content.innerHTML = "<p>Loading...</p>"; // Show a loading message
+  const schedule = await fetchScheduleForDay(day);
 
+  if (!schedule) {
+    content.innerHTML = `<p style="color: red;">Failed to load data for ${day}. Please check the CSV file.</p>`;
+    return;
+  }
+
+  content.innerHTML = ""; // Clear the loading message
   const dayBlock = document.createElement("div");
   dayBlock.className = "day-block";
   dayBlock.innerHTML = `<h2>📅 ${day}</h2>`;
 
-  Object.entries(dayData).forEach(([time, tasks]) => {
+  Object.entries(schedule).forEach(([time, tasks]) => {
     const timeBlock = document.createElement("div");
     timeBlock.className = "time-block";
     timeBlock.innerHTML = `<h3>⏰ ${time}</h3>`;
