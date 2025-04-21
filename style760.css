@@ -1,47 +1,62 @@
 /* Responsive styles */
 @media (max-width: 768px) {
+  body {
+    padding: 0;
+    margin: 0;
+    width: 100%; /* Ensure body spans the full width */
+    box-sizing: border-box;
+  }
+
+  .container {
+    width: 100%; /* Full width for smaller screens */
+    padding: 15px; /* Adjust padding for smaller screens */
+  }
+
   .tabs {
-    flex-direction: column;
-    gap: 10px;
+    flex-direction: column; /* Stack tabs vertically */
+    gap: 8px; /* Reduce gap between tabs */
   }
 
   .tabs button {
-    width: 100%;
+    width: 100%; /* Full-width buttons for better usability */
     text-align: center;
+    font-size: 1rem; /* Maintain readable font size */
   }
 
   .day-block {
-    padding: 15px;
+    padding: 12px; /* Slightly reduce padding */
   }
 
   .time-block h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem; /* Adjust font size for time headers */
+    margin: 12px 0 6px;
   }
 
   .task {
-    padding: 12px;
+    padding: 10px; /* Adjust padding for task blocks */
+    margin-bottom: 12px; /* Adjust margin between tasks */
   }
 
   .team-container {
-    justify-content: center;
-    gap: 15px;
+    justify-content: center; /* Center team members */
+    gap: 12px; /* Adjust spacing between team members */
   }
 
   .team-member img {
-    width: 60px;
-    height: 60px;
+    width: 55px; /* Slightly smaller avatar size */
+    height: 55px;
   }
 
   .team-member {
-    font-size: 0.9rem;
+    font-size: 0.85rem; /* Adjust font size for names */
   }
 
   .leader img {
-    width: 50px;
-    height: 50px;
+    width: 45px; /* Adjust leader avatar size */
+    height: 45px;
   }
 
   .leader span {
-    font-size: 1rem;
+    font-size: 0.95rem; /* Adjust font size for leader details */
   }
 }

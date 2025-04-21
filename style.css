@@ -5,10 +5,21 @@ body {
   align-items: center;
   min-height: 100vh;
   margin: 0;
+  padding: 0;
   background: #f3f4f6; /* Light gray background for reduced eye strain */
   color: #333333; /* Dark gray text for better readability */
   font-family: 'Roboto', Arial, sans-serif;
   line-height: 1.6;
+  width: 100%; /* Ensure body spans the full width */
+  box-sizing: border-box; /* Include padding and border in width calculations */
+}
+
+.container {
+  width: 100%; /* Full width for smaller screens */
+  max-width: 1200px; /* Limit maximum width for larger screens */
+  margin: 0 auto; /* Center the container */
+  padding: 20px; /* Add padding for spacing */
+  box-sizing: border-box; /* Include padding in width calculations */
 }
 
 h1 {
