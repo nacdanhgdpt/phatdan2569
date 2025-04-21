@@ -1,0 +1,24 @@
+{
+    "days": [
+        {
+            "date": "25\/4",
+            "day": "Thứ Sáu",
+            "display": "25\/4 (Thứ Sáu)"
+        },
+        {
+            "date": "26\/4",
+            "day": "Thứ Bảy",
+            "display": "26\/4 (Thứ Bảy)"
+        },
+        {
+            "date": "30\/4",
+            "day": "Thứ Tư",
+            "display": "30\/4 (Thứ Tư)"
+        },
+        {
+            "date": "01\/05",
+            "day": "Thứ Năm",
+            "display": "01\/05 (Thứ Năm)"
+        }
+    ]
+}

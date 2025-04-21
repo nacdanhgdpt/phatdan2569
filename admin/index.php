@@ -36,6 +36,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['delete_file'])) {
         $fileToDelete = $_POST['delete_file'];
         if (file_exists($fileToDelete)) {
+            // Before deleting, remove from days.json if published
+            $filename = basename($fileToDelete);
+            $date = str_replace('-', '/', str_replace('.csv', '', $filename));
+            $daysJsonPath = __DIR__ . '/../days.json';
+
+            if (file_exists($daysJsonPath)) {
+                $daysData = json_decode(file_get_contents($daysJsonPath), true);
+                $newDays = [];
+                $removed = false;
+
+                foreach ($daysData['days'] as $day) {
+                    if ($day['date'] !== $date) {
+                        $newDays[] = $day;
+                    } else {
+                        $removed = true;
+                    }
+                }
+
+                if ($removed) {
+                    $daysData['days'] = $newDays;
+                    updateJsonFile($daysJsonPath, $daysData);
+                }
+            }
+
+            // Now delete the file
             unlink($fileToDelete);
             $message = "File '" . basename($fileToDelete) . "' đã được xóa thành công.";
             $csvFiles = glob("$csvDir/*.csv"); // Refresh the list
@@ -49,15 +74,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if ($selectedFile && file_exists($selectedFile)) {
     $fileContent = file_get_contents($selectedFile);
 }
-?>
 
+// Function to update the JSON file with file locking and comment preservation
+function updateJsonFile($daysJsonPath, $daysData) {
+    $fp = fopen($daysJsonPath, 'w');
+    if (!$fp) {
+        return false;
+    }
+    if (!flock($fp, LOCK_EX)) {
+        fclose($fp);
+        return false;
+    }
+    $jsonContent = json_encode($daysData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    $fileContent = "// filepath: " . $daysJsonPath . "\n" . $jsonContent;
+    $result = fwrite($fp, $fileContent);
+    flock($fp, LOCK_UN);
+    fclose($fp);
+    return ($result !== false);
+}
+?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Quản Trị</title>
-    <link rel="stylesheet" href="../common-style.css">
+    <link rel="stylesheet" href="common-style.css">
     <link rel="stylesheet" href="admin-style.css">
 </head>
 <body>
@@ -72,31 +114,59 @@ if ($selectedFile && file_exists($selectedFile)) {
         <div class="section">
             <h2>Danh Sách File CSV</h2>
             <ul class="csv-list">
-                <?php foreach ($csvFiles as $file): ?>
-                    <li>
-                        <a href="?file=<?= urlencode($file) ?>"><?= basename($file) ?></a>
-                        <form method="POST" class="inline-form">
-                            <input type="hidden" name="delete_file" value="<?= htmlspecialchars($file) ?>">
-                            <button type="submit" class="delete-button" onclick="confirmDelete(event, '<?= basename($file) ?>')">Xóa</button>
-                        </form>
+                <?php
+                // Load days.json to check public statuses
+                $daysJsonPath = __DIR__ . '/../days.json';
+                $daysData = [];
+                $publicFiles = [];
+                if (file_exists($daysJsonPath)) {
+                    $daysData = json_decode(file_get_contents($daysJsonPath), true);
+                    if (isset($daysData['days']) && is_array($daysData['days'])) {
+                        foreach ($daysData['days'] as $day) {
+                            $publicFiles[] = str_replace('/', '-', $day['date']) . '.csv';
+                        }
+                    }
+                }
+                
+                foreach ($csvFiles as $file):
+                    $filename = basename($file);
+                    $isPublic = in_array($filename, $publicFiles);
+                    $statusClass = $isPublic ? 'public' : 'not-public';
+                ?>
+                    <li class="file-item <?= $selectedFile === $file ? 'selected' : '' ?> <?= $statusClass ?>">
+                        <div class="file-header">
+                            <a href="?file=<?= urlencode($file) ?>"><?= $filename ?></a>
+                            <div class="file-actions">
+                                <form method="POST" class="inline-form public-form">
+                                    <input type="hidden" name="toggle_public" value="<?= htmlspecialchars($file) ?>">
+                                    <input type="hidden" name="current_status" value="<?= $isPublic ? '1' : '0' ?>">
+                                    <button type="button" class="public-button <?= $isPublic ? 'is-public' : '' ?>" 
+                                            onclick="togglePublic(this, '<?= $filename ?>', <?= $isPublic ? 'true' : 'false' ?>)">
+                                        <?= $isPublic ? 'Unpublic' : 'Public' ?>
+                                    </button>
+                                </form>
+                                <form method="POST" class="inline-form">
+                                    <input type="hidden" name="delete_file" value="<?= htmlspecialchars($file) ?>">
+                                    <button type="submit" class="delete-button" onclick="confirmDelete(event, '<?= $filename ?>')">Xóa</button>
+                                </form>
+                            </div>
+                        </div>
+                        <?php if ($selectedFile === $file): ?>
+                            <div class="edit-form-container">
+                                <form method="POST" id="edit-form">
+                                    <input type="hidden" name="file" value="<?= htmlspecialchars($selectedFile) ?>">
+                                    <textarea name="content" rows="15"><?= htmlspecialchars($fileContent) ?></textarea>
+                                    <div class="form-buttons">
+                                        <button type="submit" class="save-button">Lưu Thay Đổi</button>
+                                        <button type="button" class="close-button" onclick="hideEditForm()">Đóng</button>
+                                    </div>
+                                </form>
+                            </div>
+                        <?php endif; ?>
                     </li>
                 <?php endforeach; ?>
             </ul>
         </div>
-
-        <?php if ($selectedFile): ?>
-            <div class="section">
-                <h2>Chỉnh Sửa: <?= basename($selectedFile) ?></h2>
-                <form method="POST" id="edit-form">
-                    <input type="hidden" name="file" value="<?= htmlspecialchars($selectedFile) ?>">
-                    <textarea name="content" rows="20"><?= htmlspecialchars($fileContent) ?></textarea>
-                    <div class="form-buttons">
-                        <button type="submit" class="save-button">Lưu Thay Đổi</button>
-                        <button type="button" class="close-button" onclick="hideEditForm()">Đóng</button>
-                    </div>
-                </form>
-            </div>
-        <?php endif; ?>
 
         <div class="section">
             <h2>Tạo Lịch Mới</h2>

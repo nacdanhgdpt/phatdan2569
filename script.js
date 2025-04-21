@@ -34,20 +34,33 @@ function parseCSV(csvText) {
 }
 
 async function init() {
-  const days = ["25/4 (Thứ Sáu)", "26/4 (Thứ Bảy)", "30/4 (Thứ Tư)"]; // Add 30/4 (Thứ Tư)
-  const tabs = document.getElementById("tabs");
-  const content = document.getElementById("content");
+  try {
+    // Fetch days from JSON file
+    const response = await fetch('days.json');
+    if (!response.ok) {
+      throw new Error('Could not load days data');
+    }
+    const data = await response.json();
+    const days = data.days.map(item => item.display);
+    
+    const tabs = document.getElementById("tabs");
+    const content = document.getElementById("content");
 
-  days.forEach((day, index) => {
-    const btn = document.createElement("button");
-    btn.innerText = day;
-    btn.className = index === 0 ? "active" : "";
-    btn.onclick = () => renderDay(day, btn);
-    tabs.appendChild(btn);
-  });
+    days.forEach((day, index) => {
+      const btn = document.createElement("button");
+      btn.innerText = day;
+      btn.className = index === 0 ? "active" : "";
+      btn.onclick = () => renderDay(day, btn);
+      tabs.appendChild(btn);
+    });
 
-  // Render ngày đầu tiên
-  renderDay(days[0], tabs.children[0]);
+    // Render ngày đầu tiên
+    renderDay(days[0], tabs.children[0]);
+  } catch (error) {
+    console.error("Error initializing app:", error);
+    document.getElementById("content").innerHTML = 
+      `<p style="color: red;">Failed to load days data. Please check days.json file.</p>`;
+  }
 }
 
 async function renderDay(day, btn) {
