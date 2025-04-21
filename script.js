@@ -1,67 +1,39 @@
-const schedule = {
-  "25/4 (Thứ Sáu)": {
-    "18h - 19h30": [
-      {
-        title: "Dọn ghế đá chỗ phông 6m",
-        leader: "Anh Duy",
-        team: "Thanh Thiếu Nam"
-      },
-      {
-        title: "Đem sắt dưới chân cầu thang ra ngoài",
-        leader: "Anh Duy",
-        team: "Thanh Thiếu Nam"
-      }
-    ]
-  },
-  "26/4 (Thứ Bảy)": {
-    "9h - 11h30": [
-      {
-        title: "Bắn khung background 6m x 6m & treo tấm phông",
-        leader: "Anh Phi",
-        team: "Anh Khoa, Đăng, Nam, Đức Anh + Đoàn Thiếu Nam",
-        tools: "2 máy khoan tay"
-      },
-      {
-        title: "Lắp 4 cây sắt + đèn rọi tượng Phật",
-        leader: "Anh Khoa",
-        team: "Đăng, Nam, Thắng + Thiếu Nam",
-        tools: "2 máy khoan tay"
-      },
-      {
-        title: "Soạn khung bàn Phật 3 tầng",
-        leader: "Anh Duy",
-        team: "Tỉnh, Việt Hoàng, Nam + Thiếu Nam",
-        tools: "Khóa vặn bu lông"
-      }
-    ],
-    "13h30 - 17h": [
-      {
-        title: "Treo phông 6m x 6m",
-        leader: "Anh Duy, Anh Tín, Anh Khoa",
-        team: "6 bạn Nam Phật tử"
-      },
-      {
-        title: "Lắp ráp khung 3 tầng, bắn gỗ lót sàn bàn Phật",
-        leader: "Anh Duy",
-        team: "Việt Hoàng, Đức Anh, Nam + Thiếu Nam",
-        tools: "2 máy khoan tay"
-      }
-    ]
-  }
-};
+async function fetchSchedule() {
+  const response = await fetch("schedule.csv");
+  const csvText = await response.text();
+  return parseCSV(csvText);
+}
 
-const tabs = document.getElementById("tabs");
-const content = document.getElementById("content");
+function parseCSV(csvText) {
+  const rows = csvText.split("\n").map(row => row.split(","));
+  const schedule = {};
+  rows.slice(1).forEach(row => {
+    const [day, time, title, leader, team, tools] = row.map(cell => cell.trim());
+    if (!schedule[day]) schedule[day] = {};
+    if (!schedule[day][time]) schedule[day][time] = [];
+    schedule[day][time].push({ title, leader, team, tools: tools || undefined });
+  });
+  return schedule;
+}
 
-Object.keys(schedule).forEach((day, index) => {
-  const btn = document.createElement("button");
-  btn.innerText = day;
-  btn.className = index === 0 ? "active" : "";
-  btn.onclick = () => renderDay(day, btn);
-  tabs.appendChild(btn);
-});
+async function init() {
+  const schedule = await fetchSchedule();
+  const tabs = document.getElementById("tabs");
+  const content = document.getElementById("content");
 
-function renderDay(day, btn) {
+  Object.keys(schedule).forEach((day, index) => {
+    const btn = document.createElement("button");
+    btn.innerText = day;
+    btn.className = index === 0 ? "active" : "";
+    btn.onclick = () => renderDay(day, btn, schedule);
+    tabs.appendChild(btn);
+  });
+
+  // Render ngày đầu tiên
+  renderDay(Object.keys(schedule)[0], tabs.children[0], schedule);
+}
+
+function renderDay(day, btn, schedule) {
   // Đổi tab đang chọn
   [...tabs.children].forEach(b => b.classList.remove("active"));
   btn.classList.add("active");
@@ -94,5 +66,5 @@ function renderDay(day, btn) {
   content.appendChild(dayBlock);
 }
 
-// Render ngày đầu tiên
-renderDay(Object.keys(schedule)[0], tabs.children[0]);
+// Initialize the app
+init();
