@@ -1,15 +1,20 @@
 body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #f3f4f6; /* Light gray background for reduced eye strain */
+  color: #333333; /* Dark gray text for better readability */
   font-family: 'Roboto', Arial, sans-serif;
-  margin: 20px;
-  background: #f9f9f9;
-  color: #333;
   line-height: 1.6;
 }
 
 h1 {
   text-align: center;
-  color: #4a5568;
-  font-size: 2rem;
+  color: #2d3748; /* Dark gray for the title */
+  font-size: 2.5rem;
   margin-bottom: 20px;
 }
 
@@ -23,50 +28,52 @@ h1 {
 
 .tabs button {
   padding: 10px 20px;
-  background: #e2e8f0;
+  background: #e2e8f0; /* Light gray for buttons */
   border: 1px solid #cbd5e0;
   cursor: pointer;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: bold;
-  color: #2d3748;
+  color: #2d3748; /* Dark gray text for buttons */
   transition: background-color 0.3s, color 0.3s;
 }
 
 .tabs button.active {
-  background-color: #2b6cb0;
+  background-color: #4a5568; /* Medium gray for active buttons */
   color: white;
-  border-color: #2b6cb0;
+  border-color: #4a5568;
 }
 
 .tabs button:hover {
-  background-color: #4299e1;
+  background-color: #2d3748; /* Darker gray for hover effect */
   color: white;
 }
 
 .day-block {
   margin-bottom: 30px;
   padding: 20px;
-  background: #ffffff;
+  background: #ffffff; /* White background for content blocks */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: #2d3748; /* Dark gray text for content */
 }
 
 .time-block h3 {
   margin: 15px 0 10px;
-  color: #2b6cb0;
+  color: #4a5568; /* Medium gray for time headers */
   font-size: 1.2rem;
   border-bottom: 2px solid #e2e8f0;
   padding-bottom: 5px;
 }
 
 .task {
-  background: #edf2f7;
+  background: #edf2f7; /* Very light gray for task blocks */
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 15px;
   margin-bottom: 15px;
   transition: transform 0.2s, box-shadow 0.2s;
+  color: #2d3748; /* Dark gray text for tasks */
 }
 
 .task:hover {
@@ -87,7 +94,7 @@ h1 {
   align-items: center;
   text-align: center;
   font-size: 0.9rem;
-  color: #4a5568;
+  color: #2d3748; /* Dark gray text for team members */
 }
 
 .team-member img {
@@ -101,12 +108,12 @@ h1 {
 
 .team-member img:hover {
   transform: scale(1.1);
-  border-color: #2b6cb0;
+  border-color: #4a5568; /* Medium gray border on hover */
 }
 
 .leader {
   font-weight: bold;
-  color: #2b6cb0;
+  color: #4a5568; /* Medium gray for leader text */
   display: flex;
   align-items: center;
   margin-bottom: 10px;
@@ -115,7 +122,7 @@ h1 {
 .leader span {
   margin-left: 8px;
   font-size: 0.9rem;
-  color: #4a5568;
+  color: #2d3748; /* Dark gray for leader details */
   font-style: italic;
 }
 
@@ -123,102 +130,6 @@ h1 {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid #2b6cb0;
+  border: 2px solid #4a5568; /* Medium gray border for leader avatar */
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-  .tabs {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .tabs button {
-    width: 100%;
-    text-align: center;
-  }
-
-  .day-block {
-    padding: 15px;
-  }
-
-  .time-block h3 {
-    font-size: 1.2rem; /* Increase font size for better readability */
-  }
-
-  .task {
-    padding: 12px; /* Slightly increase padding */
-  }
-
-  .team-container {
-    justify-content: center; /* Center team members on smaller screens */
-    gap: 15px;
-  }
-
-  .team-member img {
-    width: 60px; /* Increase avatar size */
-    height: 60px;
-  }
-
-  .team-member {
-    font-size: 0.9rem; /* Increase font size for names */
-  }
-
-  .leader img {
-    width: 50px; /* Increase leader avatar size */
-    height: 50px;
-  }
-
-  .leader span {
-    font-size: 1rem; /* Increase font size for leader name */
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.8rem; /* Slightly increase the title size */
-  }
-
-  .tabs {
-    gap: 8px;
-  }
-
-  .tabs button {
-    font-size: 1rem; /* Increase button font size */
-    padding: 10px 18px;
-  }
-
-  .day-block {
-    padding: 10px; /* Reduce padding to save space */
-  }
-
-  .time-block h3 {
-    font-size: 1.1rem; /* Adjust font size for smaller screens */
-  }
-
-  .task {
-    padding: 10px; /* Reduce padding for compactness */
-  }
-
-  .team-container {
-    gap: 10px; /* Reduce spacing between team members */
-  }
-
-  .team-member img {
-    width: 50px; /* Adjust avatar size */
-    height: 50px;
-  }
-
-  .team-member {
-    font-size: 0.8rem; /* Adjust font size for names */
-  }
-
-  .leader img {
-    width: 45px; /* Adjust leader avatar size */
-    height: 45px;
-  }
-
-  .leader span {
-    font-size: 0.9rem; /* Adjust font size for leader name */
-  }
-}

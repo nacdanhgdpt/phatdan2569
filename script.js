@@ -1,6 +1,6 @@
 async function fetchScheduleForDay(day) {
   try {
-    const fileName = day.replace(/\//g, "-").split(" ")[0] + ".csv"; // Convert "25/4 (Thứ Sáu)" to "25-4.csv"
+    const fileName = `schedules/${day.replace(/\//g, "-").split(" ")[0]}.csv`; // Convert "25/4 (Thứ Sáu)" to "schedules/25-4.csv"
     const response = await fetch(fileName);
 
     if (!response.ok) {

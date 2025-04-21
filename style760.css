@@ -1,0 +1,47 @@
+/* Responsive styles */
+@media (max-width: 768px) {
+  .tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .tabs button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .day-block {
+    padding: 15px;
+  }
+
+  .time-block h3 {
+    font-size: 1.2rem;
+  }
+
+  .task {
+    padding: 12px;
+  }
+
+  .team-container {
+    justify-content: center;
+    gap: 15px;
+  }
+
+  .team-member img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .team-member {
+    font-size: 0.9rem;
+  }
+
+  .leader img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .leader span {
+    font-size: 1rem;
+  }
+}
